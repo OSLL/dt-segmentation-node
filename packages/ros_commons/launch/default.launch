@@ -8,9 +8,14 @@
          doc="The configuration of the robot (e.g., DB19, DB20, WT18, ...)"/>
 
     <!-- ROS HTTP API: provides an HTTP API through which we can monitor the ROS network -->
-    <include file="$(find ros_http_api)/launch/ros_http_api_node.launch">
-        <arg name="veh" value="$(arg veh)"/>
-        <arg name="param_file_name" value="$(arg param_file_name)"/>
-    </include>
+
+    <arg name="/camera/rect" default="true"/>
+     <group if="$(arg /camera/rect)">
+         <remap from="test/image_in" to="camera_node/image/compressed"/>
+         <remap from="test/image_out" to="camera_node/image/test"/>
+        <include file="$(find ros_commons)/launch/test.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+    </group>
 
 </launch>

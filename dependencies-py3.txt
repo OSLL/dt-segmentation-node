@@ -20,3 +20,6 @@ flask-cors
 
 # this is for DTROS and buff_size input
 humanfriendly
+
+
+torch

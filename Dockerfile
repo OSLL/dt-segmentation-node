@@ -45,6 +45,36 @@ ENV DT_REPO_PATH "${REPO_PATH}"
 ENV DT_LAUNCH_PATH "${LAUNCH_PATH}"
 ENV DT_LAUNCHER "${LAUNCHER}"
 
+
+
+#! add cuda to path
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+#! nvidia-container-runtime
+# https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/user-guide.html
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+# TODO: Fix requreiment to elimitate old GPU to run the dt-ml image
+#ENV NVIDIA_REQUIRE_ARCH "maxwell pascal volta turing ampere"
+#ENV NVIDIA_REQUIRE_CUDA "cuda>=10.2"
+
+#! VERSIONING CONFIGURATION
+# this is mainly for AMD64 as on Jetson it comes with the image
+ENV CUDA_VERSION 10.2.89
+ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
+ENV NCCL_VERSION 2.8.4
+ENV CUDNN_VERSION 8.1.1.33
+
+ENV PYTORCH_VERSION 1.7.0
+ENV TORCHVISION_VERSION 0.8.1
+
+ENV TENSORRT_VERSION 7.1.3.4
+
+ENV PYCUDA_VERSION 2021.1
+
+
+
 # create repo directory
 RUN mkdir -p "${REPO_PATH}"
 
@@ -59,6 +89,7 @@ ENV PIP_INDEX_URL=${PIP_INDEX_URL}
 COPY ./dependencies-py3.* "${REPO_PATH}/"
 RUN dt-pip3-install "${REPO_PATH}/dependencies-py3.*"
 
+RUN pip3 install git+https://github.com/OSLL/duckietown-segmentation.git@seg1
 # copy the source code
 COPY ./packages "${REPO_PATH}/packages"
 
