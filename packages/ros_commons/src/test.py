@@ -18,7 +18,7 @@ from cv_bridge import CvBridge
 
 class Segmentation:
     def __init__(self, model_dir="/code/catkin_ws/src/dt-ros-commons/packages/ros_commons/model/",
-                 model_path="unetlr=0.0001optim=AdamWepoch=29.pth.tar", num_classes=4, height=480, width=640,
+                 model_path="edanetlr=0.0007optim=AdamWepoch=33.pth.tar", num_classes=4, height=480, width=640,
                  env_id=0, device="cuda", ):
 
 
@@ -31,7 +31,7 @@ class Segmentation:
         self.device = f"cuda:{cuda_id}"
         print("device", self.device)
 
-        self.model = load_UNet_model(f"{model_dir}{model_path}", num_classes, self.device)
+        self.model = load_EDANet_model(f"{model_dir}{model_path}", num_classes, self.device)
 
         self.transform = A.Compose(
             [
@@ -45,9 +45,19 @@ class Segmentation:
         obs = get_predict(0, obs, self.model, self.device)
         obs = obs.cpu()
 
-        image = np.dstack([obs[0], obs[0], obs[0]])
-        print(np.unique(image))
-        image = (image * 100 % 255).astype(np.uint8)
+        obs = np.dstack([obs[0], obs[0], obs[0]])
+        print(obs.shape)
+        print(obs)
+
+        mask_white = np.where(obs == [1, 1, 1], [255, 255, 255], [0, 0, 0])
+
+        mask_yellow = np.where(obs == [2, 2, 2], [255, 255, 0], [0, 0, 0])
+
+        mask_red = np.where((obs == [3, 3, 3]), [255, 0, 0], [0, 0, 0])
+        mask_green = np.where((obs == [4, 4, 4]), [0, 255, 0], [0, 0, 0])
+
+        test = mask_yellow + mask_red + mask_white+mask_green
+        image = test.astype(np.uint8)
         return image
 
 
@@ -83,9 +93,10 @@ class TestNode(DTROS):
         # make sure this matters to somebody
 
         img = self.bridge.compressed_imgmsg_to_cv2(msg)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = self.segm.observation(img)
         # turn 'raw image' into 'raw image message'
-        out_msg = self.bridge.cv2_to_imgmsg(img, "bgr8")
+        out_msg = self.bridge.cv2_to_imgmsg(img, "rgb8")
         # maintain original header
         out_msg.header = msg.header
         # publish image
