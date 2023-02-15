@@ -7,7 +7,7 @@ ARG ICON="square"
 ARG ARCH=arm32v7
 ARG DISTRO=daffy
 ARG BASE_TAG=${DISTRO}-${ARCH}
-ARG BASE_IMAGE=dt-commons
+ARG BASE_IMAGE=dt-ros-commons
 ARG LAUNCHER=default
 
 # define base image

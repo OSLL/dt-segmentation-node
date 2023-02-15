@@ -18,7 +18,7 @@ dt-set-module-healthy
 
 dt-exec "${DT_REPO_PATH}"/launchers/build.sh
 # launching app
-dt-exec roslaunch ros_commons default.launch veh:="$VEHICLE_NAME"
+dt-exec roslaunch segmentation_node default.launch veh:="$VEHICLE_NAME"
 
 
 # ----------------------------------------------------------------------------
