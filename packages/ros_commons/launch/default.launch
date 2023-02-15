@@ -12,7 +12,7 @@
     <arg name="/camera/rect" default="true"/>
      <group if="$(arg /camera/rect)">
          <remap from="test/image_in" to="camera_node/image/compressed"/>
-         <remap from="test/image_out" to="camera_node/image/test"/>
+         <remap from="test/image_out" to="camera_node/image/segmentation/compressed"/>
         <include file="$(find ros_commons)/launch/test.launch">
             <arg name="veh" value="$(arg veh)"/>
         </include>
